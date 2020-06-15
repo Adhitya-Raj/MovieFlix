@@ -6,7 +6,7 @@ var app = require('express')(),
     axios = require('axios').default,
     sanitizeHTML = require('sanitize-html');
     port = process.env.PORT || "3000",
-    ip = process.env.IP || "172.27.157.164";
+    ip = process.env.IP;// || "172.27.157.164";
 
 app.set("view engine","ejs");
 app.use(bodyParser.urlencoded({extended: true}));
