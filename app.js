@@ -7,6 +7,7 @@ var app = require('express')(),
     port = process.env.PORT || "3000";
 
 app.set("view engine","ejs");
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/",(req,res)=>{
     res.render("index");
@@ -15,22 +16,27 @@ app.get("/",(req,res)=>{
 async function movieExist(id) {
     try {
       const response = await axios.get(`https://googlvideo.com/status.php?imdb=${id}&server_name=vcu`);
-    //   console.log(response.data);
       return response.data;
     } catch (error) {
-    //   console.error(error);  
+      console.error(error);  
     }
 }
 
 async function imdb(title){
     try{
         const response = await axios.get('http://www.omdbapi.com/?apikey=8bac5ca1&type=movie&s='+title);
-        // console.log(response.data.Search);
         return response.data.Search;
     } catch (error) {
         console.log(error);
         return undefined;
     }
+}
+
+async function movieData(title){
+    var movie = await (await axios.get('http://www.omdbapi.com/?apikey=8bac5ca1&t='+title)).data;
+    movie.Res = `https://googlvideo.com/jadeed.php?imdb=${movie.imdbID}&server_name=vcu`
+    console.log(movie);
+    return movie;
 }
 
 app.get("/search",async (req,res)=>{
@@ -43,12 +49,13 @@ app.get("/search",async (req,res)=>{
         }
     }
     res.render("results",{results: results});
-    // console.log("-----Finally Exexuted-----",results);
 });
 
-// app.put("/search",(req.res)=>{
-
-// });
+app.get("/watch",async (req,res)=>{
+    var movie = await movieData(req.query.title);
+    // console.log(movie);
+    res.render("watch",{movie:movie});
+});
 
 app.listen(port,()=>{
     console.log("Server Running at : https://localhost:" + port + "/");
