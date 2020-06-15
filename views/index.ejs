@@ -1,14 +1,18 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MovieFlix</title>
-</head>
-<body>
-    <h1>MovieFlix</h1>
-    <form action="/search" method="GET">
-        <input name="title" type="text">
-        <input type="submit">
-    </form>
-</body>
-</html>
+<%- include('./partials/header') %>
+    <div class="container">
+        <div class="jumbotron mt-5">
+            <h1 class="display-4 text-center">MovieFlix</h1>  
+            <form action="/search" method="GET">
+                <div class="form-group">
+                    <div class="input-group input-group-lg">
+                        <input class="form-control" name="title" type="text" placeholder="Enter Movie Title" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        <div class="input-group-append">
+                            <button class="btn btn-success" type="submit">GO!</button>
+                          </div>
+                      </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+<%- include('./partials/footer') %>

@@ -1,11 +1,15 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MovieFlix</title>
-</head>
-<body>
-    <h1><%=movie.Title%></h1>
-    <iframe src="<%= movie.Res %>" frameborder="5px" style="height: 270px; width: 480px;"></iframe>
-</body>
-</html>
+<%- include('./partials/header') %>
+    <div class="container mt-5 d-flex justify-items-center">
+        <div class="card">
+            <div class="embed-responsive" style="margin-left: auto; margin-right:auto; height : 405px; width: 720px; max-width: 100%;">
+                <iframe class="pl-auto pr-auto embed-responsive-item d-block" src="<%= movie.Res %>" allowfullscreen></iframe>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title"><strong><%= movie.Title %></strong> - <%= movie.Year %> </h5>
+                <p class="card-text"><%=movie.Plot%></p>
+                <p class="card-text"><strong><%= movie.Ratings[1].Source %></strong> - <em><%= movie.Ratings[1].Value %></em></p>
+            </div>
+        </div>
+    </div>
+    
+<%- include('./partials/footer') %>

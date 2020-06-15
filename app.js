@@ -3,8 +3,10 @@ const { json } = require('body-parser');
 
 var app = require('express')(),
     bodyParser = require('body-parser'),
-    axios = require('axios').default;
-    port = process.env.PORT || "3000";
+    axios = require('axios').default,
+    sanitizeHTML = require('sanitize-html');
+    port = process.env.PORT || "3000",
+    ip = process.env.IP || "172.27.157.164";
 
 app.set("view engine","ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -18,30 +20,30 @@ async function movieExist(id) {
       const response = await axios.get(`https://googlvideo.com/status.php?imdb=${id}&server_name=vcu`);
       return response.data;
     } catch (error) {
-      console.error(error);  
+      return 404; 
     }
 }
 
 async function imdb(title){
     try{
-        const response = await axios.get('http://www.omdbapi.com/?apikey=8bac5ca1&type=movie&s='+title);
+        const response = await axios.get('http://www.omdbapi.com/?apikey='+process.env.OMDBKEY+'&type=movie&s='+title);
         return response.data.Search;
     } catch (error) {
         console.log(error);
-        return undefined;
+        return null;
     }
 }
 
-async function movieData(title){
-    var movie = await (await axios.get('http://www.omdbapi.com/?apikey=8bac5ca1&t='+title)).data;
+async function movieData(id){
+    var movie = await (await axios.get('http://www.omdbapi.com/?apikey='+process.env.OMDBKEY+'&i='+id)).data;
     movie.Res = `https://googlvideo.com/jadeed.php?imdb=${movie.imdbID}&server_name=vcu`
-    console.log(movie);
     return movie;
 }
 
 app.get("/search",async (req,res)=>{
     var results = [];
-    var data = await imdb(req.query.title);
+    var title = sanitizeHTML(req.query.title);
+    var data = await imdb(title) || 0;
     for(var i=0; i<data.length;++i){
         var status = await movieExist(data[i].imdbID);
         if(status === 200){
@@ -52,11 +54,12 @@ app.get("/search",async (req,res)=>{
 });
 
 app.get("/watch",async (req,res)=>{
-    var movie = await movieData(req.query.title);
+    var id = sanitizeHTML(req.query.id);
+    var movie = await movieData(id);
     // console.log(movie);
     res.render("watch",{movie:movie});
 });
 
-app.listen(port,()=>{
-    console.log("Server Running at : https://localhost:" + port + "/");
+app.listen(port,ip,()=>{
+    console.log("Server Running at :"+ip+":"+ + port + "/");
 });
